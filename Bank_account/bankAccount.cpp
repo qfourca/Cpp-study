@@ -84,7 +84,7 @@ void input(void)
 	arr[num].money += inMoney;
 	cout << inMoney << "원이 입금되었습니다" << "\n";
 	cout << arr[num].name << "님의 ";
-	cout << "잔액은 " << arr[num].money << " 원입니다" << "\n";
+	cout << "잔액은 " << arr[num].money << "원입니다" << "\n";
 }
 void output(void)
 {
@@ -112,10 +112,9 @@ void output(void)
 		arr[num].money -= outMoney;
 		cout << outMoney << "원이 출금되었습니다" << "\n";
 		cout << arr[num].name << "님의 ";
-		cout << "잔액은 " << arr[num].money << " 원입니다" << "\n";
+		cout << "잔액은 " << arr[num].money << "원입니다" << "\n";
 	}
 }
-
 int checkAccNum(int accIden)
 {
 	for (int i = 0; i < accNum; i++)
