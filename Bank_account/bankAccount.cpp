@@ -81,10 +81,10 @@ void input(void)
 		num = checkAccNum(num);
 	cout << "입금할 금액을 입력 해 주세요: ";
 	cin >> inMoney;
-	arr[checkAccNum(num)].money += inMoney;
+	arr[num].money += inMoney;
 	cout << inMoney << "원이 입금되었습니다" << "\n";
-	cout << arr[checkAccNum(num)].name << "님의 ";
-	cout << "잔액은 " << arr[checkAccNum(num)].money << " 원입니다" << "\n";
+	cout << arr[num].name << "님의 ";
+	cout << "잔액은 " << arr[num].money << " 원입니다" << "\n";
 }
 void output(void)
 {
@@ -109,10 +109,10 @@ void output(void)
 	}
 	else
 	{
-		arr[checkAccNum(num)].money -= outMoney;
-		cout << outMoney << "원이 출금되었습니다" <<"\n";
-		cout << arr[checkAccNum(num)].name << "님의 ";
-		cout << "잔액은 " << arr[checkAccNum(num)].money << " 원입니다" <<"\n";
+		arr[num].money -= outMoney;
+		cout << outMoney << "원이 출금되었습니다" << "\n";
+		cout << arr[num].name << "님의 ";
+		cout << "잔액은 " << arr[num].money << " 원입니다" << "\n";
 	}
 }
 
@@ -129,7 +129,7 @@ int checkAccNum(int accIden)
 }
 int checkAccMoney(int Inmoney, int accIden)
 {
-	if (arr[checkAccNum(accIden)].money < Inmoney)
+	if (arr[accIden].money < Inmoney)
 		return -1;
 	else
 		return 0;
@@ -140,7 +140,7 @@ void print(void)
 	for (int i = 0; i < accNum; i++)
 	{
 		std::cout << "이름: " << arr[i].name << "\n";
-		std::cout << "잔액: " << arr[i].money << "\n";
+		std::cout << "잔액: " << arr[i].money << "\n\n";
 	}
 }
 
