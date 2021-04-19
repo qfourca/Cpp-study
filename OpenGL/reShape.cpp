@@ -1,7 +1,6 @@
 #include <GL/glut.h>
 #include <GL/GL.h>
 #include <GL/GLU.h>
-#include <iostream>
 
 #define _WINDOW_WIDTH 500
 #define _WINDOW_HEIGHT 500
