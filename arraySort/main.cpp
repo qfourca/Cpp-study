@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <Windows.h>
@@ -66,20 +66,20 @@ void tablePrint()
 		for (int j = 1; j <= arr[i]; j++)
 		{
 			gotoxy(i + 1, number + 5 - j);
-			cout << "¢Ì";
+			cout << "ï¿½ï¿½";
 		}
 	}
 }
 
 void inPrint()
 {
-	cout << "µ¥ÀÌÅÍÀÇ °³¼ö Á¤·Ä¹æ½Ä Áö¿¬½Ã°£ ¼ø¼­·Î ÀÔ·ÂÇØ ÁÖ¼¼¿ä" << endl;
+	cout << "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ï¿½ï¿½" << endl;
 	srand(static_cast<unsigned int>(time(NULL)));
 	cin >> number >> type >> delayTime;
 	if (number < 2)
-		cout << "³Ê¹« ÀÛÀº °ªÀÔ´Ï´Ù";
+		cout << "ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´Ï´ï¿½";
 	else if (number >= 100)
-		cout << "³Ê¹« Å« °ªÀÔ´Ï´Ù";
+		cout << "ï¿½Ê¹ï¿½ Å« ï¿½ï¿½ï¿½Ô´Ï´ï¿½";
 	else
 		for (int i = 0; i < number; i++)
 		{
@@ -102,8 +102,9 @@ void tablePrintColor(int line)
 		for (int j = 1; j <= arr[i]; j++)
 		{
 			gotoxy(i + 1, number + 5 - j);
-			cout << "¢Ì";
+			cout << "ï¿½ï¿½";
 		}
 	}
 }
+
 
