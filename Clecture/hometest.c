@@ -1,6 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <math.h>
 int dice[20];// 값을 저장할 1차원 배열
 int Count, anssum;// Count에 주사위의 개수를 저장 anssum에 나야 하는 합계를 저장
 void DICE(int X)
