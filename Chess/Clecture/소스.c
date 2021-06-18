@@ -1,5 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include "Header.h"
+
 enum HorChar { a = 1, b, c, d, e, f, g, h };
 bool drawWin[WIDTH][HEIGHT];// x y
 
@@ -36,34 +37,35 @@ int ReturnX(char x)
 	case f: return 136; break;
 	case g: return 151; break;
 	case h: return 165; break;
-		default 
+	default: return -1;
 	}
 }
 int ReturnY(int y)
 {
 	switch (y)
 	{
-	case 1: return 61; break;
-	case 2: return 76; break;
+	case 1: return 1; break;
+	case 2: return 16; break;
 	case 3: return 91; break;
 	case 4: return 106; break;
 	case 5: return 121; break;
 	case 6: return 136; break;
 	case 7: return 151; break;
 	case 8: return 165; break;
+	default: return -1;
 	}
 }
 
-void PutGrey(char x, int y)
+void DrawGray(char x, int y)
 {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), GREY);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), GRAY);
 	enum Hor hor = x;
-	gotoxy(ReturnX(x), 1);
+	gotoxy(ReturnX(x), ReturnY(y));
 	for (int i = 0; i < 15; i++)
 	{
 		for (int j = 0; j < 14; j++)
 			printf("%s", fullpoint);
-		gotoxy(61, i + 1);
+		gotoxy(ReturnX(x), ReturnY(y)+i);
 	}
 }
 
@@ -75,13 +77,14 @@ int main()
 		PutHorizontal(60, 180, i);
 	for (int i = 60; i <= 180; i += 15)
 		PutVertical(0, 120, i);
+
 	for (int i = 0; i < HEIGHT; i++)
 		for (int j = 0; j < WIDTH; j++)
 		{
 			drawWin[j][i] ? SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), WHITE) : SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BLACK);
 			printf("%s", fullpoint);
 		}
-	PutGrey(b, 61);
+	DrawGray(b, 2);
 
 	Sleep(100000);
 }

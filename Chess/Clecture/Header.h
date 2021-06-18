@@ -1,10 +1,13 @@
 #pragma once
 #define fullpoint "  "
-#define GREY 112
-#define BLACK 0
+
 #define WHITE 240
+#define GRAY 128
+#define GRAY 112
+#define BLACK 0
+
 #define HEIGHT 130
-#define WIDTH 250
+#define WIDTH 250 // 128
 #include <stdio.h>
 #include <windows.h>
 #include <stdbool.h>
