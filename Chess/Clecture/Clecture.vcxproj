@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Header.c" />
     <ClCompile Include="소스.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Drawing.hpp" />
     <ClInclude Include="Header.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
