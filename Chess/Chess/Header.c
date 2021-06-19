@@ -1,5 +1,8 @@
 #include "Header.h"
 
+bool ReturnColor(int x, int y) { return Character[x][y] < 15 ? true : false; }
+bool OverSize(int a, int b) { return a >= 0 && a <= 7 && b >= 0 && b <= 7; }
+
 void gotoxy(int x, int y)
 {
 	x *= 2;
@@ -62,22 +65,52 @@ void Setting()
 	for (int i = 0; i < 8; i++)
 		Character[i][1] = 1;
 
-	Character[0][7] = 4 << 4;
-	Character[7][7] = 4 << 4;
-	Character[1][7] = 3 << 4;
-	Character[6][7] = 3 << 4;
-	Character[2][7] = 2 << 4;
-	Character[5][7] = 2 << 4;
-	Character[3][7] = 5 << 4;
-	Character[4][7] = 6 << 4;
+	Character[0][7] = 64;
+	Character[7][7] = 64;
+	Character[1][7] = 48;
+	Character[6][7] = 48;
+	Character[2][7] = 32;
+	Character[5][7] = 32;
+	Character[3][7] = 80;
+	Character[4][7] = 96;
 	for (int i = 0; i < 8; i++)
-		Character[i][6] = 1 << 4;
+		Character[i][6] = 16;
+	Cursor myCursor;
+	myCursor.x = 1;
+	myCursor.y = 2;
+
+}
+
+void CanIGo(int x, int y)
+{
+	for (int i = 0; i < 8; i++)
+		for (int j = 0; j < 8; j++)
+			canIGo[i][j] = (bool)false;
+	switch (Character[x - 1][y - 1])
+	{
+	case 1:
+	case 16: CanIGoPon(x, y); break;
+	case 2:
+	case 32: CanIGoBishop(x, y); break;
+	case 3:
+	case 48: CanIGoKnight(x, y); break;
+	case 4:
+	case 64: CanIGoRook(x, y); break;
+	case 5:
+	case 80: CanIGoQueen(x, y); break;
+	case 6:
+	case 96: CanIGoKing(x, y); break;
+	default: break;
+	}
+	for (int i = 0; i < 8; i++)
+		for (int j = 0; j < 8; j++)
+			if (canIGo[i][j] == true) { DrawBorder(i + 1, j + 1, GREEN); }
 
 }
 
 void DrawBorder(int x, int y, int color)
 {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 16);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 	gotoxy(ReturnX(x), ReturnY(y));
 	printf("                            ");
 	gotoxy(ReturnX(x), ReturnY(y) + 13);
@@ -91,18 +124,53 @@ void DrawBorder(int x, int y, int color)
 	}
 
 }
-
-void PutHorizontal(int Start, int End, int Ver)
+void CharacterMovement(int x, int y)
 {
-	for (int i = Start; i < End; i++)
-		drawWin[i][Ver] = false;
+	int FirstX = x, FirstY = y;
+	Sleep(AFTERINPUTKEYSTOP*2);
+	for (;;)
+	{
+		if (GetAsyncKeyState(VK_LEFT))
+		{
+			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
+			DrawBorder(--x, y, canIGo[x - 2][y - 1]?AQUA:RED);
+			myCursor.x--;
+			Sleep(AFTERINPUTKEYSTOP);
+		}
+		if (GetAsyncKeyState(VK_RIGHT))
+		{
+			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
+			DrawBorder(++x, y, canIGo[x][y - 1] ? AQUA : RED);
+			myCursor.x++;
+			Sleep(AFTERINPUTKEYSTOP);
+		}
+		if (GetAsyncKeyState(VK_UP))
+		{
+			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
+			DrawBorder(x, ++y, canIGo[x - 1][y] ? AQUA : RED);
+			myCursor.y++;
+			Sleep(AFTERINPUTKEYSTOP);
+		}
+		if (GetAsyncKeyState(VK_DOWN))
+		{
+			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
+			DrawBorder(x, --y, canIGo[x - 1][y - 2] ? AQUA : RED);
+			myCursor.y--;
+			Sleep(AFTERINPUTKEYSTOP);
+		}
+		if (GetAsyncKeyState(VK_SPACE)  ) 
+		{
+			Character[x - 1][y - 1] = Character[FirstX - 1][FirstY - 1];
+			Character[FirstX - 1][FirstY - 1] = -1;
+			DrawCore(FirstX, FirstY, isColor[FirstX - 1][FirstY - 1]);
+			DrawCore(x, y, isColor[x - 1][y - 1]);
+			DrawCharacter(x, y, Character[x - 1][y - 1]);
+			RemoveAllBorder(); return;
+		}
+		if (GetAsyncKeyState(VK_BACK)) { RemoveAllBorder(); return; }
+	}
 }
 
-void PutVertical(int Start, int End, int Hor)
-{
-	for (int i = Start; i < End; i++)
-		drawWin[Hor][i] = false;
-}
 
 void DrawCore(char x, int y, bool isWhite)
 {
@@ -117,13 +185,27 @@ void DrawCore(char x, int y, bool isWhite)
 }
 
 
+void RemoveAllBorder()
+{
+	for(int i = 0;i<8;i++)
+		for (int j = 0; j < 8; j++)
+			DrawBorder(i + 1, j + 1, isColor[i][j] ? WWHITE : WBLACK);
+}
 
 
 
+/////////////////////////////////////////////////
+void PutHorizontal(int Start, int End, int Ver)
+{
+	for (int i = Start; i < End; i++)
+		drawWin[i][Ver] = false;
+}
 
-
-
-
+void PutVertical(int Start, int End, int Hor)
+{
+	for (int i = Start; i < End; i++)
+		drawWin[Hor][i] = false;
+}
 int ReturnX(int x)
 {
 	switch (x)
@@ -155,6 +237,184 @@ int ReturnY(int y)
 	default: return -1;
 	}
 }
+
+
+void CanIGoPon(int x, int y)
+{
+	x--; y--;
+	bool isWhite = Character[x][y] < 15;
+	if (isWhite)
+	{
+		if (Character[x][y + 1] == -1) { canIGo[x][y + 1] = true; }
+		if (Character[x][y + 2] == -1 && y == 1) { canIGo[x][y + 2] = true; }
+		if (Character[x + 1][y + 1] != -1 && ReturnColor(x + 1, y + 1) != isWhite) { canIGo[x + 1][y + 1] = true; }
+		if (Character[x - 1][y + 1] != -1 && ReturnColor(x - 1, y + 1) != isWhite) { canIGo[x - 1][y + 1] = true; }
+	}
+	else
+	{
+		if (Character[x][y - 1] == -1) { canIGo[x][y - 1] = true; }
+		if (Character[x][y - 2] == -1 && y == 6) { canIGo[x][y - 2] = true; }
+		if (Character[x + 1][y - 1] != -1 && ReturnColor(x + 1, y - 1) != isWhite) { canIGo[x + 1][y - 1] = true; }
+		if (Character[x - 1][y - 1] != -1 && ReturnColor(x - 1, y - 1) != isWhite) { canIGo[x - 1][y - 1] = true; }
+	}
+}
+void CanIGoBishop(int x, int y)
+{
+	int firstX = x, firstY = y;
+	bool isWhite = Character[x - 1][y - 1] < 15;
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		x++; y++;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		x--; y++;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		x++; y--;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		x--; y--;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+}
+void CanIGoKnight(int x, int y)
+{
+	x--; y--;
+	bool isWhite = Character[x][y] < 15;
+	if (OverSize(x + 2, y + 1) && (Character[x + 2][y + 1] == -1 || ReturnColor(x + 2, y + 1) != isWhite)) { canIGo[x + 2][y + 1] = true; }
+	if (OverSize(x + 2, y - 1) && (Character[x + 2][y - 1] == -1 || ReturnColor(x + 2, y - 1) != isWhite)) { canIGo[x + 2][y - 1] = true; }
+	if (OverSize(x - 2, y + 1) && (Character[x - 2][y + 1] == -1 || ReturnColor(x - 2, y + 1) != isWhite)) { canIGo[x - 2][y + 1] = true; }
+	if (OverSize(x - 2, y - 1) && (Character[x - 2][y - 1] == -1 || ReturnColor(x - 2, y - 1) != isWhite)) { canIGo[x - 2][y - 1] = true; }
+	if (OverSize(x + 1, y + 2) && (Character[x + 1][y + 2] == -1 || ReturnColor(x + 1, y + 2) != isWhite)) { canIGo[x + 1][y + 2] = true; }
+	if (OverSize(x + 1, y - 2) && (Character[x + 1][y - 2] == -1 || ReturnColor(x + 1, y - 2) != isWhite)) { canIGo[x + 1][y - 2] = true; }
+	if (OverSize(x - 1, y + 2) && (Character[x - 1][y + 2] == -1 || ReturnColor(x - 1, y + 2) != isWhite)) { canIGo[x - 1][y + 2] = true; }
+	if (OverSize(x - 1, y - 2) && (Character[x - 1][y - 2] == -1 || ReturnColor(x - 1, y - 2) != isWhite)) { canIGo[x - 1][y - 2] = true; }
+}
+
+void CanIGoRook(int x, int y)
+{
+	int firstX = x, firstY = y;
+	bool isWhite = Character[x - 1][y - 1] < 15;
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		x++;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		x--;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		y++;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+	for (x = firstX - 1, y = firstY - 1;;)
+	{
+		y--;
+		if (!OverSize(x, y)) { break; }
+		if (Character[x][y] == -1)
+			canIGo[x][y] = true;
+		else if (ReturnColor(x, y) != isWhite)
+		{
+			canIGo[x][y] = true;
+			break;
+		}
+		else
+			break;
+	}
+}
+void CanIGoQueen(int x, int y)
+{
+	CanIGoBishop(x, y);
+	CanIGoRook(x, y);
+}
+
+void CanIGoKing(int x, int y)
+{
+	x--; y--;
+	bool isWhite = Character[x][y] < 15;
+	if (OverSize(x + 1, y + 1) && (Character[x + 1][y + 1] == -1 || ReturnColor(x + 1, y + 1) != isWhite)) { canIGo[x + 1][y + 1] = true; }
+	if (OverSize(x + 1, y) && (Character[x + 1][y] == -1 || ReturnColor(x + 1, y) != isWhite)) { canIGo[x + 1][y] = true; }
+	if (OverSize(x + 1, y - 1) && (Character[x + 1][y - 1] == -1 || ReturnColor(x + 1, y - 1) != isWhite)) { canIGo[x + 1][y - 1] = true; }
+	if (OverSize(x, y + 1) && (Character[x][y + 1] == -1 || ReturnColor(x, y + 1) != isWhite)) { canIGo[x][y + 1] = true; }
+	if (OverSize(x, y - 1) && (Character[x][y - 1] == -1 || ReturnColor(x, y - 1) != isWhite)) { canIGo[x][y - 1] = true; }
+	if (OverSize(x - 1, y + 1) && (Character[x - 1][y + 1] == -1 || ReturnColor(x - 1, y + 1) != isWhite)) { canIGo[x - 1][y + 1] = true; }
+	if (OverSize(x - 1, y) && (Character[x - 1][y] == -1 || ReturnColor(x - 1, y) != isWhite)) { canIGo[x - 1][y] = true; }
+	if (OverSize(x - 1, y - 1) && (Character[x - 1][y - 1] == -1 || ReturnColor(x - 1, y - 1) != isWhite)) { canIGo[x - 1][y - 1] = true; }
+}
+
+
 void PrintPon(int x, int y)
 {
 	gotoxy(ReturnX(x) + 7, ReturnY(y) + 1);
@@ -297,13 +557,16 @@ void PrintKing(int x, int y)
 	gotoxy(ReturnX(x) + 4, ReturnY(y) + 8);
 	for (int i = 0; i < 6; i++) { printf("%s", fullpoint); }
 }
+void PrintVoid(int x, int y)
+{
+	gotoxy(ReturnX(x) + 6, ReturnY(y) + 3);
+}
 
 void DrawCharacter(int x, int y, char whatIsThisCharacter)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), whatIsThisCharacter > 15 ? CWHITE : CBLACK);
 	switch (whatIsThisCharacter)
 	{
-	case 0:
 	case 1:
 	case 16: PrintPon(x, y); break;
 	case 2:
@@ -316,6 +579,8 @@ void DrawCharacter(int x, int y, char whatIsThisCharacter)
 	case 80: PrintQueen(x, y); break;
 	case 6:
 	case 96:PrintKing(x, y); break;
+	case -1: DrawCore(x, y , isColor[x-1][y-1]);
+
 	default: break;
 	}
 }
