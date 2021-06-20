@@ -1,5 +1,6 @@
 #include "Header.h"
 
+
 bool ReturnColor(int x, int y) { return Character[x][y] < 15 ? true : false; }
 bool OverSize(int a, int b) { return a >= 0 && a <= 7 && b >= 0 && b <= 7; }
 
@@ -10,13 +11,25 @@ void gotoxy(int x, int y)
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos); //커서의 위치를 정해주는 함수
 }
 
-void Setting()
+int Setting()
 {
+	HANDLE outcon = GetStdHandle(STD_OUTPUT_HANDLE);//you don't have to call this function every time
+
+	CONSOLE_FONT_INFOEX font;//CONSOLE_FONT_INFOEX is defined in some windows header
+	GetCurrentConsoleFontEx(outcon, false, &font);//PCONSOLE_FONT_INFOEX is the same as CONSOLE_FONT_INFOEX*
+	font.dwFontSize.X = 3;
+	font.dwFontSize.Y = 6;
+	SetCurrentConsoleFontEx(outcon, false, &font);
+	SetConsoleTextAttribute(outcon, 0x05);
+	SetConsoleTitle(TEXT("와! 신난다! 즐거운 체스게임"));
 	CONSOLE_CURSOR_INFO cursorInfo = { 0, };
 	cursorInfo.dwSize = 1; //커서 굵기 (1 ~ 100)
 	cursorInfo.bVisible = FALSE; //커서 Visible TRUE(보임) FALSE(숨김)
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
 	system("mode con cols=500 lines=135");
+	//////////서버 통신////////////
+	
+	//////////////연결후//////////////
 
 	for (int i = 0; i < WIDTH; i++)
 		for (int j = 0; j < HEIGHT; j++)
@@ -78,7 +91,7 @@ void Setting()
 	Cursor myCursor;
 	myCursor.x = 1;
 	myCursor.y = 2;
-
+	return 0;
 }
 
 void CanIGo(int x, int y)
@@ -124,51 +137,53 @@ void DrawBorder(int x, int y, int color)
 	}
 
 }
-void CharacterMovement(int x, int y)
+int CharacterMovement(int x, int y)
 {
 	int FirstX = x, FirstY = y;
+
 	Sleep(AFTERINPUTKEYSTOP*2);
 	for (;;)
 	{
-		if (GetAsyncKeyState(VK_LEFT))
+		if (GetAsyncKeyState(VK_LEFT ) && myCursor.x > 1)
 		{
 			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
 			DrawBorder(--x, y, canIGo[x - 2][y - 1]?AQUA:RED);
 			myCursor.x--;
 			Sleep(AFTERINPUTKEYSTOP);
 		}
-		if (GetAsyncKeyState(VK_RIGHT))
+		if (GetAsyncKeyState(VK_RIGHT ) && myCursor.x < 8)
 		{
 			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
 			DrawBorder(++x, y, canIGo[x][y - 1] ? AQUA : RED);
 			myCursor.x++;
 			Sleep(AFTERINPUTKEYSTOP);
 		}
-		if (GetAsyncKeyState(VK_UP))
+		if (GetAsyncKeyState(VK_UP ) && myCursor.y < 8)
 		{
 			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
 			DrawBorder(x, ++y, canIGo[x - 1][y] ? AQUA : RED);
 			myCursor.y++;
 			Sleep(AFTERINPUTKEYSTOP);
 		}
-		if (GetAsyncKeyState(VK_DOWN))
+		if (GetAsyncKeyState(VK_DOWN ) && myCursor.y > 1)
 		{
 			DrawBorder(x, y, canIGo[x - 1][y - 1] ? GREEN : isColor[x - 1][y - 1] ? WWHITE : WBLACK);
 			DrawBorder(x, --y, canIGo[x - 1][y - 2] ? AQUA : RED);
 			myCursor.y--;
 			Sleep(AFTERINPUTKEYSTOP);
 		}
-		if (GetAsyncKeyState(VK_SPACE)  ) 
+		if (GetAsyncKeyState(VK_SPACE) && canIGo[x-1][y-1] == true && ((turnCount % 2 == 0 ) != myColorIsWhite))
 		{
-			Character[x - 1][y - 1] = Character[FirstX - 1][FirstY - 1];
-			Character[FirstX - 1][FirstY - 1] = -1;
 			DrawCore(FirstX, FirstY, isColor[FirstX - 1][FirstY - 1]);
 			DrawCore(x, y, isColor[x - 1][y - 1]);
 			DrawCharacter(x, y, Character[x - 1][y - 1]);
-			RemoveAllBorder(); return;
+			RemoveAllBorder();
+			
+			return FirstX * 1000 + FirstY * 100 + x * 10 + y;
 		}
-		if (GetAsyncKeyState(VK_BACK)) { RemoveAllBorder(); return; }
+		//if (GetAsyncKeyState(VK_BACK)) { RemoveAllBorder(); return -1; } 수정필요
 	}
+	return -1;
 }
 
 

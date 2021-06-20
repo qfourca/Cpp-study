@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include "Serverconection.h"
 #include "Header.h"
-
 
 int main()
 {
@@ -11,9 +11,34 @@ int main()
 	
 	myCursor.x = 1;
 	myCursor.y = 2;
+
+	WSADATA wsadata;
+	WSAStartup(MAKEWORD(2, 2), &wsadata);//扩加 檬扁拳	
+
+	SOCKET sock;
+	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);//家南 积己
+	if (sock == -1)
+	{
+		return -1;
+	}
+
+	SOCKADDR_IN servaddr = { 0 };//家南 林家
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+	servaddr.sin_port = htons(PORT_NUM);
+
+	int re = 0;
+	re = connect(sock, (struct sockaddr*)&servaddr, sizeof(servaddr));//楷搬 夸没
+	if (re == -1) { return -1; }
+	_beginthread(RecvThreadPoint, 0, (void*)sock);
+	char msg[MAX_MSG_LEN] = "";
+
 	DrawBorder(myCursor.x, myCursor.y, RED);
 	for (;;)
 	{
+		//gets_s(msg, MAX_MSG_LEN);
+		//send(sock, msg, sizeof(msg), 0);//价脚
+		//if (strcmp(msg, "exit") == 0) { break; }
 		if (GetAsyncKeyState(VK_LEFT) && myCursor.x > 1)
 		{
 			DrawBorder(myCursor.x, myCursor.y, isColor[myCursor.x - 1][myCursor.y - 1] ? WWHITE : WBLACK);
@@ -38,13 +63,18 @@ int main()
 			DrawBorder(myCursor.x, --myCursor.y, RED);
 			Sleep(AFTERINPUTKEYSTOP);
 		}
-		if (GetAsyncKeyState(VK_SPACE) && Character[myCursor.x-1][myCursor.y-1] != -1)
+		if (GetAsyncKeyState(VK_SPACE) && Character[myCursor.x-1][myCursor.y-1] != -1 && ((Character[myCursor.x - 1][myCursor.y - 1] > 15) == myColorIsWhite))
 		{
 			DrawBorder(myCursor.x, myCursor.y, AQUA);
 			CanIGo(myCursor.x, myCursor.y);
-			CharacterMovement(myCursor.x, myCursor.y);
+			int willSendServerInfo = CharacterMovement(myCursor.x, myCursor.y);
 			DrawBorder(myCursor.x, myCursor.y, RED);
+			itoa(willSendServerInfo, &msg, 10);
+			send(sock, msg, sizeof(msg), 0);
 			Sleep(AFTERINPUTKEYSTOP);
 		}
 	}
+	closesocket(sock);//家南 摧扁    
+	WSACleanup();//扩加 秦力拳
+	return 0;
 }

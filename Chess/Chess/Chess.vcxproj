@@ -24,6 +24,8 @@
   <ItemGroup>
     <ClCompile Include="Header.c" />
     <ClCompile Include="Main.c" />
+    <ClCompile Include="Serverconection.h" />
+    <ClCompile Include="Serverconnection.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

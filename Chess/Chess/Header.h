@@ -6,7 +6,7 @@
 #define WWHITE 128 // 체스 캐릭터의 검은색
 #define WBLACK 112 // 체스 판의 검은색
 #define CBLACK 240 // 체스 판의 검은색
-#define BLUE 16
+#define BLUE 48
 #define GREEN 32
 #define AQUA 16
 #define RED 64
@@ -24,6 +24,9 @@ bool drawWin[WIDTH][HEIGHT];// x y
 char Character[8][8];
 bool isColor[8][8];
 bool canIGo[8][8];
+bool myColorIsWhite;
+int turnCount;
+char serverInput[256];
 
 typedef struct Cursor
 {
@@ -34,7 +37,7 @@ Cursor myCursor;
 
 enum HorChar { a = 1, b, c, d, e, f, g, h };
 void gotoxy(int x, int y);
-void Setting();
+int Setting();
 int ReturnX(int x);
 int ReturnY(int y);
 void RemoveAllBorder();
@@ -57,7 +60,7 @@ void CanIGoKnight(int x, int y);
 void CanIGoRook(int x, int y);
 void CanIGoQueen(int x, int y);
 void CanIGoKing(int x, int y);
-void CharacterMovement(int x, int y);
+int CharacterMovement(int x, int y);
 
 
 //bool isCharacterNotExist(int x, int y);
