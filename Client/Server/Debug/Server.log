@@ -1,6 +1,0 @@
-﻿  Program.c
-C:\Users\user\Desktop\Client\Server\Program.c(110,24): warning C4047: '함수': 'char *'의 간접 참조 수준이 'char (*)[256]'과(와) 다릅니다.
-C:\Users\user\Desktop\Client\Server\Program.c(110,19): warning C4024: 'itoa': 형식 및 실제 매개 변수 2의 형식이 서로 다릅니다.
-  common.c
-  코드를 생성하고 있습니다...
-  Server.vcxproj -> C:\Users\user\Desktop\Client\Debug\Server.exe
