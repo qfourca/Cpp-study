@@ -8,8 +8,12 @@ template <typename tem2>
 void function2(const tem2 &parm)
 {
 }
-
-int main(int argc, char *argv[])
+template <typename tem3>
+void function3(tem3 &parm)
+{
+}
+template <
+    int main(int argc, char *argv[])
 {
     //템플릿 타입 추론 도중에 참조 타입의 인수들은 비참조로 취급된다
     int argument = 1;
@@ -26,6 +30,15 @@ int main(int argc, char *argv[])
                          //parm이 포인터나 참조자를 가지고 있으나 universal 참조는 아닐 때
                          //parm이 univisial 참조일 때
                          //parm이 포인터나 참조자를 가지고 있지 않을 때
+    //예1 parm이 포인터 또는 참조형이지만 universal 참조는 아닌경우
+    //만약 argument 부분이 참조형이라면 참조 부분을 무시한다
+    int x = 27;
+    const int cx = x;
+    const int &rx = x;
+    function3(cx);  //tem3는 int형으로 parm의 자료형은 int&로 추론된다
+    function3(cx); //tem3는 const int parm의 의 자료형은 const int&로 추론된다
+    function3(rx); //tem3는 const int parm의 자료형은 const int&로 추론된다
+                   //rx는 참조형이지만 tem3는 비참조로 추론되다
 
     //std::cout << argument << std::endl;
     return 0;
