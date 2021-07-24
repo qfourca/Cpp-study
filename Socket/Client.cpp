@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #define PORT 9000
-#define IPADDR "192.168.35.149"
+#define IPADDR "127.0.0.1"
 
 int main()
 {
