@@ -1,10 +1,9 @@
+#include "customio.h"
 #include <stdio.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <memory.h>
-#include <unistd.h>
-#include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
 #define PORT 80
@@ -26,19 +25,21 @@ int main()
     serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 
     memset(&serverAddress, 0, sizeof(serverAddress));
-    serverAddress.sin_addr.s_addr = inet_addr(MYIP);
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(PORT);
-
-    if (bind(serverSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
+    if ((serverAddress.sin_addr.s_addr = inet_addr(MYIP)) == -1)
     {
-        printf("Can not Bind\n");
+        perror("Wrong IP adress");
         return -1;
     }
-
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(PORT);
+    if (bind(serverSocket, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
+    {
+        perror("Can not Bind");
+        return -1;
+    }
     if (listen(serverSocket, 5) == -1)
     {
-        printf("listen Fail\n");
+        perror("listen Fail");
         return -1;
     }
 
@@ -47,24 +48,15 @@ int main()
     {
         adressLen = sizeof(clientAdress);
         clientSocket = accept(serverSocket, (struct sockaddr *)&clientAdress, &adressLen);
-        /*
-        for (;;)
-            if (read(clientSocket, recieveBuffer, sizeof(recieveBuffer)) > 0)
-                break;
-                */
+        //printf("%d\n", clientAdress.sin_addr.s_addr);
 
-        //recv()
-        /*
         if (read(clientSocket, recieveBuffer, sizeof(recieveBuffer)) > 0)
-        {
-            InputDataInsendBuffer()
-            break;
-        }*/
+            printf("%s", recieveBuffer);
         int sendTemp;
         if (sendTemp = write(clientSocket, sendBuffer, strlen(sendBuffer) + 1) == -1)
-            printf("Failed to send message\n");
+            printf("Failed to send message\n\n");
         else
-            printf("data sended sucessfully!%d\n", sendTemp);
+            printf("data sended sucessfully!%d\n\n", sendTemp);
         close(clientSocket);
     }
     close(serverSocket);
@@ -89,7 +81,7 @@ int InputDataInsendBuffer(char *buffer)
     FILE *file = fopen("send.txt", "r");
     if (file == NULL)
     {
-        printf("File Reading Error");
+        perror("File Reading Error");
         return 0;
     }
 

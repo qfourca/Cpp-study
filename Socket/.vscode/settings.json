@@ -11,6 +11,7 @@
         "streambuf": "cpp",
         "exception": "cpp",
         "iosfwd": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "cstdio": "cpp"
     }
 }
