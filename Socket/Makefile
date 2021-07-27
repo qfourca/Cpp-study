@@ -1,21 +1,15 @@
 cc=gcc
 pp=g++
 
-program=Server
+main = Main
 
-
-$(program) : $(program).cpp
-    $(pp) -o $@ $^
-        
 all :
-    $(pp) -o $(program) $(program).cpp 
-    ./$(program)
-
-after : 
-    rm $(program)
-    $(pp) -o $(program) $(program).cpp
-    ./$(program)
+	g++ -c Sock.cpp SockClass.h
+	g++ -c Server.cpp Server.h
+	g++ -o Server Main.cpp Sock.o Server.o -pthread
+	rm -rf *.o
+	rm -rf *.gch
 
 clean :
-    rm -rf *.o      
-                               
+	rm -rf *.o   
+	rm -rf *.gch
