@@ -1,47 +1,35 @@
 #include "Server.h"
+
 ServerSock serverSock;
 ClientSock clientSock;
 char sendBuffer[BUFSIZ];
 char recieveBuffer[BUFSIZ];
-void tempFunction()
+int sendedFileSize;
+
+extern void tempFunction()
 {
-    InputDataInsendBuffer("send.txt", sendBuffer);
     serverSock.SocketDefine();
     serverSock.SockAdressClear();
     serverSock.BindAndListenSocketInPort(PORT);
 
     while (true)
     {
-        clientSock.thisSocket = accept(serverSock.thisSocket, clientSock.ReturnSockAdressP(), &clientSock.adressLen);
+        clientSock.AcceptConnection(serverSock.thisSocket);
         printf("----------------------------------------------------\n");
         //printf("%d\n", clientAdress.sin_addr.s_addr);
         if (read(clientSock.thisSocket, recieveBuffer, sizeof(recieveBuffer)) > 0)
             printf("%s", recieveBuffer);
         printf("----------------------------------------------------\n");
-        if (write(clientSock.thisSocket, sendBuffer, strlen(sendBuffer) + 1) == -1)
+        sendedFileSize = clientSock.SendFile("send.txt");
+        if (!sendedFileSize)
             printf("Failed to send message\n");
         else
-            printf("data sended sucessfully!\n");
+            printf("%d bytes data sended sucessfully!\n", sendedFileSize);
         close(clientSock.thisSocket);
     }
 }
 
-int InputDataInsendBuffer(const char *fileName, char *buffer)
-{
-    FILE *file = fopen(fileName, "r");
-    if (file == NULL)
-    {
-        perror("File Reading Error");
-        return 0;
-    }
-    for (int i = 0; i < BUFSIZ; i++)
-    {
-        fscanf(file, "%c", &buffer[i]);
-    }
-    fclose(file);
-    return 1;
-}
-void CommandReader()
+int CommandReader()
 {
     char command[128];
     for (;;)

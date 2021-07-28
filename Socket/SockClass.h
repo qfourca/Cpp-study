@@ -7,9 +7,13 @@
 #include <memory.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <netinet/tcp.h>
 #include <thread>
 #include <string>
 #include <future>
+#include <sys/sendfile.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #define PORT 80
 #define MYIP "192.168.35.149"
 
@@ -17,9 +21,9 @@ class Sock
 {
 protected:
     sockaddr_in thisSocketAdress;
+    unsigned int adressLen = sizeof(thisSocketAdress);
 
 public:
-    unsigned int adressLen = sizeof(thisSocketAdress);
     int thisSocket;
     void SockAdressClear();
     void SocketDefine();
@@ -30,6 +34,8 @@ class ClientSock : public Sock
 public:
     int AcceptConnection(int serverSocket);
     sockaddr *ReturnSockAdressP();
+    void AcceptSocket(int serverSocket);
+    int SendFile(const char *fileName);
 };
 
 class ServerSock : public Sock

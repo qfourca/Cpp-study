@@ -18,6 +18,20 @@ sockaddr *ClientSock::ReturnSockAdressP()
 {
     return (struct sockaddr *)&thisSocketAdress;
 }
+void ClientSock::AcceptSocket(int serverSocket)
+{
+    thisSocket = accept(serverSocket, ReturnSockAdressP(), &adressLen);
+}
+
+int ClientSock::SendFile(const char *fileName)
+{
+    struct stat stbuf;
+    int inFile = open(fileName, O_RDONLY);
+    fstat(inFile, &stbuf);
+    int returN = sendfile(thisSocket, inFile, SEEK_SET, 1000);
+    close(inFile);
+    return returN;
+}
 
 int ServerSock::BindAndListenSocketInPort(unsigned int portNum)
 {
