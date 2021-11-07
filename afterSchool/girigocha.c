@@ -9,7 +9,6 @@ int main()
     book -= tempbook * 3;
     ring -= tempbook * 26;
     ans = 10 * tempbook;
-
     if (book)
     {
         book--;
